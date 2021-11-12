@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!-- Sample Updated for the latest Fabric version:
+        https://stackoverflow.com/questions/47408816/object-alignment-in-fabric-js -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript">
+    // integrity = "sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+    // crossorigin = "anonymous" >
+</script>
+
+<style>
+    canvas {
+        border: 2px solid black;
+    }
+</style>
+
+<script src="https://unpkg.com/fabric@latest/dist/fabric.min.js"></script>
+
+<button class="alignment" data-action="topLeft">TL</button>
+<button class="alignment" data-action="topCenter">TC</button>
+<button class="alignment" data-action="topRight">TR</button>
+<br>
+<button class="alignment" data-action="middleLeft">ML</button>
+<button class="alignment" data-action="center">Ce</button>
+<button class="alignment" data-action="middleRight">MR</button>
+<br>
+<button class="alignment" data-action="bottomLeft">BL</button>
+<button class="alignment" data-action="bottomCenter">BC</button>
+<button class="alignment" data-action="bottomRight">BR</button>
+
+<canvas id="a" width="300" height="200"></canvas>
+
+<script>
+    //Override fabric transform origin to center
+    fabric.Object.prototype.set({
+        originX: 'center',
+        originY: 'center',
+    });
+
+
+    var canvas = new fabric.Canvas('a');
+    canvas.add(new fabric.Rect({
+        left: 50,
+        top: 50,
+        height: 50,
+        width: 50,
+        fill: 'red'
+    }));
+    canvas.add(new fabric.Text('Fabricjs', {
+        left: 200,
+        top: 80,
+        fill: '#555',
+        angle: 35,
+        scaleX: .8,
+        scaleY: .8,
+    }));
+    canvas.add(new fabric.Rect({
+        left: 90,
+        top: 130,
+        height: 50,
+        width: 50,
+        fill: 'blue',
+        angle: 45,
+    }));
+
+    canvas.renderAll();
+
+    $('.alignment').click(function () {
+                if (!canvas.getActiveObject()) {
+                    return;
+                }
+
+                    var cur_value = $(this).attr('data-action');
+                    var activeObj = canvas.getActiveObject() || canvas.getActiveGroup();
+                    if (cur_value != '' && activeObj) {
+                        process_align(cur_value, activeObj);
+                        activeObj.setCoords();
+                        canvas.renderAll();
+                    } else {
+                        alert('Please select an item');
+                        return false;
+                    }
+                });
+
+            /* Align the selected object */
+            function process_align(val, activeObj) {
+                const bound = activeObj.getBoundingRect()
+                switch (val) {
+                    case 'topLeft':
+                        activeObj.set({
+                            top: activeObj.top - bound.top
+                        });
+                        activeObj.set({
+                            left: activeObj.left - bound.left
+                        });
+                        break;
+            
+                    case 'topCenter':
+                        activeObj.set({
+                            top: activeObj.top - bound.top
+                        });
+                        activeObj.set({
+                            left: canvas.width / 2
+                        });
+                        break;
+
+                    case 'topRight':
+                        activeObj.set({
+                            top: activeObj.top - bound.top
+                        });
+                        activeObj.set({
+                            left: canvas.width - bound.width / 2
+                        });
+                        break;
+
+                    case 'middleLeft':
+                        activeObj.set({
+                            top: canvas.height / 2
+                        });
+                        activeObj.set({
+                            left: activeObj.left - bound.left
+                        });
+                        break;
+
+                    case 'center':
+                        activeObj.set({
+                            top: canvas.height / 2
+                        });
+                        activeObj.set({
+                            left: canvas.width / 2
+                        });
+                        break;
+
+                    case 'middleRight':
+                        activeObj.set({
+                            top: canvas.height / 2
+                        });
+                        activeObj.set({
+                            left: canvas.width - bound.width / 2
+                        });
+                        break;
+
+                    case 'bottomLeft':
+                        activeObj.set({
+                            top: canvas.height - bound.height / 2
+                        });
+                        activeObj.set({
+                            left: activeObj.left - bound.left
+                        });
+                        break;
+
+                    case 'bottomCenter':
+                        activeObj.set({
+                            top: canvas.height - bound.height / 2
+                        });
+                        activeObj.set({
+                            left: canvas.width / 2
+                        });
+                        break;
+
+                    case 'bottomRight':
+                        activeObj.set({
+                            top: canvas.height - bound.height / 2
+                        });
+                        activeObj.set({
+                            left: canvas.width - bound.width / 2
+                        });
+                        break;
+                }
+            }
+</script>
